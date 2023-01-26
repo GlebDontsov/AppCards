@@ -107,13 +107,13 @@ class ScreenSets(Screen):
         for filename in os.listdir(directory):
             file_name = os.path.join(directory, filename)[5:-5]
 
-            self.line = OneLineAvatarIconListItem(
-                IconRightWidget(icon='feather',
-                                text=f'{file_name}',
-                                ripple_alpha=0.15,
-                                on_press=lambda x: Methods.create_screen_update(x, 'sets')),
-                text=f'{file_name}',
-                on_press=lambda x: Methods.create_screen_train(x, 'sets'))
+            self.line = OneLineAvatarIconListItem(text=f'{file_name}',
+                                                  on_press=lambda x: Methods.create_screen_train(x, 'sets'))
+
+            self.button_feather = IconRightWidget(icon='feather',
+                                                  text=f'{file_name}',
+                                                  ripple_alpha=0.15,
+                                                  on_press=lambda x: Methods.create_screen_update(x, 'sets'))
 
             self.button_star = IconLeftWidget(icon="star-outline",
                                               text=f'{file_name}',
@@ -125,9 +125,11 @@ class ScreenSets(Screen):
                                                  ripple_alpha=0.15,
                                                  on_press=lambda x: self.delete_set(x))
 
+            self.button_feather.ids['container'] = self.line
             self.button_star.ids['container'] = self.line
             self.button_delete.ids['container'] = self.line
 
+            self.line.add_widget(self.button_feather)
             self.line.add_widget(self.button_star)
             self.line.add_widget(self.button_delete)
             self.list_view.add_widget(self.line)
@@ -152,14 +154,19 @@ class ScreenSets(Screen):
         shutil.move(source_path, destination_path)
         ScreenStar.update_star(sm.get_screen('star'), x.text)
 
-    def update_sets(self, text):
-        self.line = OneLineAvatarIconListItem(
-            IconRightWidget(icon='feather',
-                            text=f'{text}',
-                            ripple_alpha=0.15,
-                            on_press=lambda x: Methods.create_screen_update(x, 'sets')),
-            text=f'{text}',
-            on_press=lambda x: Methods.create_screen_train(x, 'sets'))
+    def update_sets(self, text, screen=None, operation='add'):
+        if operation == 'update' and screen:
+            self.list_view.remove_widget(screen.ids['container'])
+            list_view = self.list_view.children
+            self.scroll = MDScrollView(list_view)
+
+        self.line = OneLineAvatarIconListItem(text=f'{text}',
+                                              on_press=lambda x: Methods.create_screen_train(x, 'sets'))
+
+        self.button_feather = IconRightWidget(icon='feather',
+                                              text=f'{text}',
+                                              ripple_alpha=0.15,
+                                              on_press=lambda x: Methods.create_screen_update(x, 'sets'))
 
         self.button_star = IconLeftWidget(icon="star-outline",
                                           text=f'{text}',
@@ -171,9 +178,11 @@ class ScreenSets(Screen):
                                              ripple_alpha=0.15,
                                              on_press=lambda x: self.delete_set(x))
 
+        self.button_feather.ids['container'] = self.line
         self.button_star.ids['container'] = self.line
         self.button_delete.ids['container'] = self.line
 
+        self.line.add_widget(self.button_feather)
         self.line.add_widget(self.button_star)
         self.line.add_widget(self.button_delete)
         self.list_view.add_widget(self.line)
@@ -243,39 +252,47 @@ class ScreenCreateSets(Screen):
         self.add_widget(box)
 
     def button_back(self):
-        if self.card_number not in self.dict_card and self.card.text and self.card2.text:
-            self.dict_card[self.card_number] = {'card': self.card.text, 'card2': self.card2.text}
-        if self.card_number > 1:
-            self.card_number -= 1
-            self.cards.text = f'Карточка №: {self.card_number}'
-            self.card.text = self.dict_card[self.card_number]['card']
-            self.card2.text = self.dict_card[self.card_number]['card2']
+        if len(self.card.text) <= 28 and len(self.card2.text) <= 28:
+            if self.card_number not in self.dict_card and self.card.text and self.card2.text:
+                self.dict_card[self.card_number] = {'card': self.card.text, 'card2': self.card2.text}
+            if self.card_number > 1:
+                self.card_number -= 1
+                self.cards.text = f'Карточка №: {self.card_number}'
+                self.card.text = self.dict_card[self.card_number]['card']
+                self.card2.text = self.dict_card[self.card_number]['card2']
         else:
             pass
 
     def button_next(self):
-        if self.card_number + 1 in self.dict_card:
-            self.card_number += 1
-            self.cards.text = f'Карточка №: {self.card_number}'
-            self.card.text = self.dict_card[self.card_number]['card']
-            self.card2.text = self.dict_card[self.card_number]['card2']
-        elif self.card.text and self.card2.text:
-            self.dict_card[self.card_number] = {'card': self.card.text, 'card2': self.card2.text}
-            self.card.text = ''
-            self.card2.text = ''
-            self.card_number += 1
-            self.cards.text = f'Карточка №: {self.card_number}'
+        if len(self.card.text) <= 28 and len(self.card2.text) <= 28:
+            if self.card_number + 1 in self.dict_card:
+                self.card_number += 1
+                self.cards.text = f'Карточка №: {self.card_number}'
+                self.card.text = self.dict_card[self.card_number]['card']
+                self.card2.text = self.dict_card[self.card_number]['card2']
+            elif self.card.text and self.card2.text:
+                self.dict_card[self.card_number] = {'card': self.card.text, 'card2': self.card2.text}
+                self.card.text = ''
+                self.card2.text = ''
+                self.card_number += 1
+                self.cards.text = f'Карточка №: {self.card_number}'
         else:
             pass
 
     def button_save(self):
-        if self.card_number not in self.dict_card and self.card.text and self.card2.text:
-            self.dict_card[self.card_number] = {'card': self.card.text, 'card2': self.card2.text}
-        if self.dict_card and self.set_name.text:
-            with open(f'sets/{self.set_name.text}.json', 'w') as f:
-                f.write(json.dumps(self.dict_card))
-            ScreenSets.update_sets(sm.get_screen('sets'), self.set_name.text)
-            self.button_cancel()
+        if len(self.card.text) <= 28 and len(self.card2.text) <= 28 and len(self.set_name.text) <= 28:
+            if not os.path.exists(f'sets/{self.set_name.text}.json'):
+                if self.card_number not in self.dict_card and self.card.text and self.card2.text:
+                    self.dict_card[self.card_number] = {'card': self.card.text, 'card2': self.card2.text}
+                if self.dict_card and self.set_name.text:
+                    with open(f'sets/{self.set_name.text}.json', 'w') as f:
+                        f.write(json.dumps(self.dict_card))
+                    ScreenSets.update_sets(sm.get_screen('sets'), self.set_name.text)
+                    self.button_cancel()
+            else:
+                self.set_name.hint_text = 'Набор уже существует'
+                self.set_name.error = True
+
         else:
             pass
 
@@ -286,6 +303,7 @@ class ScreenCreateSets(Screen):
         self.card.text = ''
         self.card2.text = ''
         self.set_name.text = ''
+        self.set_name.hint_text = 'Название набора'
         self.cards.text = f'Карточка №: {self.card_number}'
 
 
@@ -311,10 +329,6 @@ class ScreenStar(Screen):
             file_name = os.path.join(directory, filename)[5:-5]
 
             self.line = OneLineAvatarIconListItem(
-                IconRightWidget(icon='feather',
-                                text=f'{file_name}',
-                                ripple_alpha=0.15,
-                                on_press=lambda x: Methods.create_screen_update(x, 'star')),
                 text=f'{file_name}',
                 on_press=lambda x: Methods.create_screen_train(x, 'star'))
 
@@ -323,7 +337,15 @@ class ScreenStar(Screen):
                                               ripple_alpha=0.15,
                                               on_press=lambda x: self.delete_from_star(x))
 
+            self.button_feather = IconRightWidget(icon='feather',
+                                                  text=f'{file_name}',
+                                                  ripple_alpha=0.15,
+                                                  on_press=lambda x: Methods.create_screen_update(x, 'star'))
+
             self.button_star.ids['container'] = self.line
+            self.button_feather.ids['container'] = self.line
+
+            self.line.add_widget(self.button_feather)
             self.line.add_widget(self.button_star)
             self.list_view.add_widget(self.line)
 
@@ -331,12 +353,13 @@ class ScreenStar(Screen):
         box.add_widget(self.scroll)
         self.add_widget(box)
 
-    def update_star(self, new_file):
+    def update_star(self, new_file, screen=None, operation='add'):
+        if operation == 'update':
+            self.list_view.remove_widget(screen.ids['container'])
+            list_view = self.list_view.children
+            self.scroll = MDScrollView(list_view)
+
         self.line = OneLineAvatarIconListItem(
-            IconRightWidget(icon='feather',
-                            text=f'{new_file}',
-                            ripple_alpha=0.15,
-                            on_press=lambda x: Methods.create_screen_update(x, 'star')),
             text=f'{new_file}',
             on_press=lambda x: Methods.create_screen_train(x, 'star'))
 
@@ -345,7 +368,15 @@ class ScreenStar(Screen):
                                           ripple_alpha=0.15,
                                           on_press=lambda x: self.delete_from_star(x))
 
+        self.button_feather = IconRightWidget(icon='feather',
+                                              text=f'{new_file}',
+                                              ripple_alpha=0.15,
+                                              on_press=lambda x: Methods.create_screen_update(x, 'star'))
+
         self.button_star.ids['container'] = self.line
+        self.button_feather.ids['container'] = self.line
+
+        self.line.add_widget(self.button_feather)
         self.line.add_widget(self.button_star)
         self.list_view.add_widget(self.line)
 
@@ -428,7 +459,8 @@ class ScreenTrain(Screen):
                                     icon_color='0099ff',
                                     ripple_alpha=0.15,
                                     icon_size='30sp',
-                                    on_press=lambda x: threading.Thread(target=Methods.voice, args=(self.dict_cards[self.key]['card'],)).start()))
+                                    on_press=lambda x: threading.Thread(target=Methods.voice, args=(
+                                        self.dict_cards[self.key]['card'],)).start()))
 
         box.add_widget(self.card)
 
@@ -510,11 +542,12 @@ class ScreenTrain(Screen):
 
 
 class ScreenUpdate(Screen):
-    def __init__(self, file_name, directory, **kwargs):
-        with open(f'{directory}/{file_name}.json', 'r') as f:
+    def __init__(self, screen, directory, **kwargs):
+        with open(f'{directory}/{screen.text}.json', 'r') as f:
             self.sets = json.loads(f.read())
         self.directory = directory
-        self.file_name = file_name
+        self.screen = screen
+        self.file_name = screen.text
         self.keys = list(self.sets.keys())
         self.card_number = len(self.sets)
         self.i = 0
@@ -629,49 +662,56 @@ class ScreenUpdate(Screen):
                 self.cards.text = f'Карточка №: {self.i + 1}'
 
     def button_plus(self):
-        if self.card.text and self.card2.text:
-            self.sets[str(uuid.uuid4())] = {'card': '', 'card2': ''}
-            self.keys = list(self.sets.keys())
-            self.card_number = len(self.sets)
-            self.sets[self.keys[self.i]] = {'card': self.card.text, 'card2': self.card2.text}
-            self.i = self.card_number - 1
-            self.card.text = self.sets[self.keys[self.i]]["card"]
-            self.card2.text = self.sets[self.keys[self.i]]["card2"]
-            self.cards.text = f'Карточка №: {self.i + 1}'
+        if len(self.card.text) <= 28 and len(self.card2.text) <= 28:
+            if self.card.text and self.card2.text:
+                self.sets[str(uuid.uuid4())] = {'card': '', 'card2': ''}
+                self.keys = list(self.sets.keys())
+                self.card_number = len(self.sets)
+                self.sets[self.keys[self.i]] = {'card': self.card.text, 'card2': self.card2.text}
+                self.i = self.card_number - 1
+                self.card.text = self.sets[self.keys[self.i]]["card"]
+                self.card2.text = self.sets[self.keys[self.i]]["card2"]
+                self.cards.text = f'Карточка №: {self.i + 1}'
 
     def button_save(self):
-        if self.card.text and self.card2.text:
-            self.sets[self.keys[self.i]] = {'card': self.card.text, 'card2': self.card2.text}
-        else:
-            del self.sets[self.keys[self.i]]
-        if self.sets and self.set_name.text:
-            os.rename(f'{self.directory}/{self.file_name}.json', f'sets/{self.set_name.text}.json')
-            with open(f'{self.directory}/{self.set_name.text}.json', 'w') as f:
-                f.write(json.dumps(self.sets))
-            Methods.sets_update(self.directory)
-            Methods.back(self.directory, 'update')
+        if len(self.card.text) <= 28 and len(self.card2.text) <= 28 and len(self.set_name.text) <= 28:
+            if self.card.text and self.card2.text:
+                self.sets[self.keys[self.i]] = {'card': self.card.text, 'card2': self.card2.text}
+            else:
+                del self.sets[self.keys[self.i]]
+            if self.sets and self.set_name.text:
+                os.rename(f'{self.directory}/{self.file_name}.json', f'{self.directory}/{self.set_name.text}.json')
+                with open(f'{self.directory}/{self.set_name.text}.json', 'w') as f:
+                    f.write(json.dumps(self.sets))
+                if self.directory == 'sets':
+                    ScreenSets.update_sets(sm.get_screen('sets'), self.set_name.text, self.screen, 'update')
+                elif self.directory == 'star':
+                    ScreenStar.update_star(sm.get_screen('star'), self.set_name.text, self.screen, 'update')
+                Methods.back(self.directory, 'update')
         else:
             pass
 
     def button_back(self):
-        if self.sets and self.card.text and self.card2.text:
-            if self.card.text and self.card2.text:
-                self.sets[self.keys[self.i]] = {'card': self.card.text, 'card2': self.card2.text}
-            if self.i > 0:
-                self.i -= 1
-                self.card.text = self.sets[self.keys[self.i]]["card"]
-                self.card2.text = self.sets[self.keys[self.i]]["card2"]
-                self.cards.text = f'Карточка №: {self.i + 1}'
+        if len(self.card.text) <= 28 and len(self.card2.text) <= 28:
+            if self.sets and self.card.text and self.card2.text:
+                if self.card.text and self.card2.text:
+                    self.sets[self.keys[self.i]] = {'card': self.card.text, 'card2': self.card2.text}
+                if self.i > 0:
+                    self.i -= 1
+                    self.card.text = self.sets[self.keys[self.i]]["card"]
+                    self.card2.text = self.sets[self.keys[self.i]]["card2"]
+                    self.cards.text = f'Карточка №: {self.i + 1}'
 
     def button_next(self):
-        if self.sets and self.card.text and self.card2.text:
-            if self.card.text and self.card2.text:
-                self.sets[self.keys[self.i]] = {'card': self.card.text, 'card2': self.card2.text}
-            if self.i < self.card_number - 1:
-                self.i += 1
-                self.card.text = self.sets[self.keys[self.i]]["card"]
-                self.card2.text = self.sets[self.keys[self.i]]["card2"]
-                self.cards.text = f'Карточка №: {self.i + 1}'
+        if len(self.card.text) <= 28 and len(self.card2.text) <= 28:
+            if self.sets and self.card.text and self.card2.text:
+                if self.card.text and self.card2.text:
+                    self.sets[self.keys[self.i]] = {'card': self.card.text, 'card2': self.card2.text}
+                if self.i < self.card_number - 1:
+                    self.i += 1
+                    self.card.text = self.sets[self.keys[self.i]]["card"]
+                    self.card2.text = self.sets[self.keys[self.i]]["card2"]
+                    self.cards.text = f'Карточка №: {self.i + 1}'
 
 
 class Methods:
@@ -686,7 +726,7 @@ class Methods:
 
     @staticmethod
     def create_screen_update(screen, directory):
-        sm.add_widget(ScreenUpdate(screen.text, directory, name='update'))
+        sm.add_widget(ScreenUpdate(screen, directory, name='update'))
         sm.current = 'update'
 
     @staticmethod
@@ -710,7 +750,7 @@ class Methods:
         playsound("voice_word.mp3")
 
 
-class AppCardsApp(MDApp):
+class MainApp(MDApp):
     def build(self):
         sm.add_widget(ScreenMenu(name='menu'))
         sm.add_widget(ScreenSets(name='sets'))
@@ -721,4 +761,4 @@ class AppCardsApp(MDApp):
 
 if __name__ == "__main__":
     sm = ScreenManager()
-    AppCardsApp().run()
+    MainApp().run()
