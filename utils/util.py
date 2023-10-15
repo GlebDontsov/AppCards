@@ -4,7 +4,7 @@ import time
 
 from gtts import gTTS
 from playsound import playsound
-# from AppCards.utils.model_speakers import model_ru, model_en
+from utils.model_speakers import model_ru, model_en
 
 
 def set_screen(name_screen, sm):
@@ -55,26 +55,25 @@ def change_word(word, translation, words):
     translation.text = f"{words[word_key]['translation']}"
 
 
-# def speak(what, lang='en'):
-#     put_accent = True
-#     put_yo = True
-#     sample_rate = 48000
-#
-#     if lang == 'ru':
-#         speaker_ru = 'aidar'
-#         audio = model_ru.apply_tts(text=what + "..",
-#                                    speaker=speaker_ru,
-#                                    sample_rate=sample_rate,
-#                                    put_accent=put_accent,
-#                                    put_yo=put_yo)
-#     else:
-#         speaker_en = 'en_116'
-#         audio = model_en.apply_tts(text=what + "..",
-#                                    speaker=speaker_en,
-#                                    sample_rate=sample_rate,
-#                                    put_accent=put_accent,
-#                                    put_yo=put_yo)
-#
-#     sd.play(audio, sample_rate)
-#     time.sleep((len(audio) / sample_rate))
-#     sd.stop(ignore_errors=True)
+def speak(what, lang='en'):
+    put_accent = True
+    put_yo = True
+    sample_rate = 48000
+
+    if lang == 'ru':
+        audio = model_ru.apply_tts(text=what + "..",
+                                   speaker='aidar',
+                                   sample_rate=sample_rate,
+                                   put_accent=put_accent,
+                                   put_yo=put_yo)
+    else:
+        audio = model_en.apply_tts(text=what + "..",
+                                   speaker='en_116',
+                                   sample_rate=sample_rate,
+                                   put_accent=put_accent,
+                                   put_yo=put_yo)
+
+    sd.play(audio, sample_rate)
+    time.sleep((len(audio) / sample_rate))
+    sd.stop(ignore_errors=True)
+

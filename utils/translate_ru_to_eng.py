@@ -4,15 +4,15 @@ from colorama import init
 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-if not os.path.exists('../model/ru-en-local'):
+if not os.path.exists('model/ru-en-local'):
     model_name = "Helsinki-NLP/opus-mt-ru-en"
     # Загружаем предобученную модель и токенизатор для задачи машинного перевода с русского на английский
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
     # Сохраняем загруженный токенизатор и модель в локальной директории 'model/ru-en-local'
-    tokenizer.save_pretrained('../model/ru-en-local')
-    model.save_pretrained('../model/ru-en-local')
+    tokenizer.save_pretrained('model/ru-en-local')
+    model.save_pretrained('model/ru-en-local')
 
 init()  # инициализируем colorama
 
