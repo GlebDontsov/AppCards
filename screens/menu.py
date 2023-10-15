@@ -1,6 +1,6 @@
-import sys
 import json
 import random
+import sys
 import threading
 
 from kivy.uix.label import Label

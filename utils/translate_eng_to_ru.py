@@ -1,15 +1,16 @@
-# from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-#
-# model_name = "Helsinki-NLP/opus-mt-en-ru"
-#
-# tokenizer = AutoTokenizer.from_pretrained(model_name)
-# model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-#
-# tokenizer.save_pretrained('./model/en-ru-local')
-# model.save_pretrained('../model/en-ru-local')
+import os
 
 from colorama import init
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+if not os.path.exists('../model/en-ru-local'):
+    model_name = 'Helsinki-NLP/opus-mt-en-ru'
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+    tokenizer.save_pretrained('../model/en-ru-local')
+    model.save_pretrained('../model/en-ru-local')
 
 init()
 tokenizer = AutoTokenizer.from_pretrained('model/en-ru-local')

@@ -1,7 +1,7 @@
 import os
 import json
 
-from AppCards.screens.sets import ScreenSets
+from screens.sets import ScreenSets
 from utils.util import set_screen
 
 from kivy.uix.label import Label

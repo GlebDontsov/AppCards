@@ -2,7 +2,7 @@ import shutil
 import os
 
 from utils.util import set_screen, create_screen_update, create_screen_train
-from AppCards.screens.sets import ScreenSets
+from screens.sets import ScreenSets
 
 from kivymd.uix.button import MDFillRoundFlatButton
 from kivymd.uix.screen import Screen

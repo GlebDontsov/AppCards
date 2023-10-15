@@ -3,8 +3,8 @@ import json
 import uuid
 
 from utils.util import back
-from AppCards.screens.stars import ScreenStar
-from AppCards.screens.sets import ScreenSets
+from screens.stars import ScreenStar
+from screens.sets import ScreenSets
 
 from kivy.uix.label import Label
 from kivymd.uix.button import MDFillRoundFlatButton, MDIconButton
