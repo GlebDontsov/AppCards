@@ -1,5 +1,5 @@
 import threading
-from utils.util import set_screen, voice
+from utils.util import set_screen, speak
 from utils.translate_eng_to_ru import translate_phrase_to_ru
 from utils.translate_ru_to_eng import translate_phrase_to_eng
 from utils.speech_rec import recognize_speech
@@ -76,7 +76,7 @@ class ScreenTranslator(Screen):
                                     ripple_alpha=0.15,
                                     icon_size='30sp',
                                     on_press=lambda x: threading.Thread(
-                                        target=voice,
+                                        target=speak,
                                         args=(self.translation.text, self.lang2.text,)).start()))
 
         box.add_widget(MDIconButton(icon='microphone',
@@ -85,7 +85,7 @@ class ScreenTranslator(Screen):
                                     icon_color='0099ff',
                                     ripple_alpha=0.15,
                                     icon_size='30sp',
-                                    on_press=lambda x: self.speech()))
+                                    on_press=lambda x: self.speech(self.lang1.text)))
 
         box.add_widget(MDFillRoundFlatButton(text='Назад',
                                              font_size='15sp',
@@ -115,6 +115,6 @@ class ScreenTranslator(Screen):
         self.translation.text = ''
         self.translator.text = ''
 
-    def speech(self):
-        words = recognize_speech()
+    def speech(self, lang='ru'):
+        words = recognize_speech(lang)
         self.translator.text = words

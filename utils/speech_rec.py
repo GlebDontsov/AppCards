@@ -2,7 +2,7 @@ import speech_recognition as sr
 from speech_recognition.exceptions import WaitTimeoutError
 
 
-def recognize_speech():
+def recognize_speech(lang='ru'):
     # Создаем объект на основе библиотеки speech_recognition и вызываем метод для определения данных
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -18,7 +18,7 @@ def recognize_speech():
 
     # Распознаем данные из mp3 дорожки.
     try:
-        word = r.recognize_google(audio, language="ru-RU")
+        word = r.recognize_google(audio, language=lang)
     except sr.UnknownValueError:
         word = 'Я вас не понял'
 

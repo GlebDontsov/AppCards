@@ -68,7 +68,7 @@ def speak(what, lang='en'):
                                    put_yo=put_yo)
     else:
         audio = model_en.apply_tts(text=what + "..",
-                                   speaker='en_116',
+                                   speaker='malayalam_male',
                                    sample_rate=sample_rate,
                                    put_accent=put_accent,
                                    put_yo=put_yo)
@@ -76,4 +76,3 @@ def speak(what, lang='en'):
     sd.play(audio, sample_rate)
     time.sleep((len(audio) / sample_rate))
     sd.stop(ignore_errors=True)
-

@@ -7,7 +7,7 @@ from kivy.uix.label import Label
 from kivymd.uix.button import MDFillRoundFlatButton, MDIconButton, MDFlatButton
 from kivymd.uix.screen import Screen
 from kivymd.uix.boxlayout import MDBoxLayout
-from utils.util import set_screen, change_word, speak, voice
+from utils.util import set_screen, change_word, voice
 
 
 class ScreenMenu(Screen):

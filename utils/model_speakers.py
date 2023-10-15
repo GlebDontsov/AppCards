@@ -1,7 +1,7 @@
 import torch
 
 language_ru = 'ru'
-model_id_ru = 'v3_1_ru'
+model_id_ru = 'v4_ru'
 model_ru, example_text_ru = torch.hub.load(repo_or_dir='snakers4/silero-models',
                                            model='silero_tts',
                                            language=language_ru,
@@ -9,7 +9,7 @@ model_ru, example_text_ru = torch.hub.load(repo_or_dir='snakers4/silero-models',
                                            trust_repo=True)
 
 language_en = 'en'
-model_id_en = 'v3_en'
+model_id_en = 'v3_en_indic'
 model_en, example_text_en = torch.hub.load(repo_or_dir='snakers4/silero-models',
                                            model='silero_tts',
                                            language=language_en,
